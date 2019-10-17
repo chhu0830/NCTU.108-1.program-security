@@ -98,7 +98,7 @@ if ( strlen(a1) == 32 )
 
 The first command of a function usually is `push ebp`, which is `0x55`,
 and the first byte of the `data` is `0x45`.
-Thus, the seed should be `16`, and we can get the function instructions.
+Thus, the `seed` should be `16`, and we can get the function instructions.
 
 ```
  0:   55                      push   ebp
