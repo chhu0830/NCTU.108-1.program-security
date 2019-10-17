@@ -52,6 +52,10 @@ which are `sub_5D1070(v1)` and `sub_5D1270(&v2)`.
 This function take `seed` as parameter.
 Most of the code are complicated,
 but only a small part of the function is related to the paramter.
+> The whole function first search for `.data` segment,
+  and then find two blocks which start with `15` and `69` seperately.
+> The first block is the comparison target, which is `unk_5D4018`.
+> The second block will be used in `sub_5D1270`, and this is the seconde block.
 
 ```c
 ...
@@ -73,7 +77,6 @@ for ( l = j + 33; l < *(_DWORD *)(i + 8); ++l )
 ...
 ```
 
-Accoring to the rest of the code, `v8` is an address.
 The code shows that it will find `69` from `l + v8` and start adding `seed` to each of the bytes until reaching `0`.
 We can find the original data by the debugger.
 
