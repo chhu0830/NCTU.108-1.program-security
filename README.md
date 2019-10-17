@@ -86,12 +86,14 @@ This function will copy some data to `v2` and execute it as a function.
 The data is the `data` mentioned in `sub_5D1070(char a1)`.
 
 ```c
+...
 if ( strlen(a1) == 32 )
 {
   v2 = VirtualAlloc(0, 0xC8u, 0x1000u, 0x40u);
   qmemcpy(v2, &unk_5D4058, 0xC8u);
   result = ((int (__cdecl *)(const char *, void *))v2)(a1, &unk_5D4018);
 }
+...
 ```
 
 The first command of a function usually is `push ebp`, which is `0x55`,
