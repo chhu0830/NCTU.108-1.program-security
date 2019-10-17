@@ -1,0 +1,31 @@
+   0:   55                      push   ebp
+   1:   8b ec                   mov    ebp,esp
+   3:   51                      push   ecx
+   4:   c7 45 fc 00 00 00 00    mov    DWORD PTR [ebp-0x4],0x0
+   b:   eb 09                   jmp    0x16
+   d:   8b 45 fc                mov    eax,DWORD PTR [ebp-0x4]
+  10:   83 c0 01                add    eax,0x1
+  13:   89 45 fc                mov    DWORD PTR [ebp-0x4],eax
+  16:   8b 4d 0c                mov    ecx,DWORD PTR [ebp+0xc]
+  19:   03 4d fc                add    ecx,DWORD PTR [ebp-0x4]
+  1c:   0f be 11                movsx  edx,BYTE PTR [ecx]
+  1f:   85 d2                   test   edx,edx
+  21:   74 25                   je     0x48
+  23:   8b 45 08                mov    eax,DWORD PTR [ebp+0x8]
+  26:   03 45 fc                add    eax,DWORD PTR [ebp-0x4]
+  29:   0f be 08                movsx  ecx,BYTE PTR [eax]
+  2c:   83 c1 23                add    ecx,0x23
+  2f:   83 f1 66                xor    ecx,0x66
+  32:   0f be d1                movsx  edx,cl
+  35:   8b 45 0c                mov    eax,DWORD PTR [ebp+0xc]
+  38:   03 45 fc                add    eax,DWORD PTR [ebp-0x4]
+  3b:   0f be 08                movsx  ecx,BYTE PTR [eax]
+  3e:   3b d1                   cmp    edx,ecx
+  40:   74 04                   je     0x46
+  42:   33 c0                   xor    eax,eax
+  44:   eb 07                   jmp    0x4d
+  46:   eb c5                   jmp    0xd
+  48:   b8 01 00 00 00          mov    eax,0x1
+  4d:   8b e5                   mov    esp,ebp
+  4f:   5d                      pop    ebp
+  50:   c3                      ret
