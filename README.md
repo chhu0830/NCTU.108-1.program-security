@@ -290,7 +290,7 @@ If we upload `file.php.jpg`,
     until it find a valid one.
 
 
-## [lab 0x04] EzLFI
+## [Lab 0x04] EzLFI
 `web` `50 pts` `FLAG{lfi_session_is_so_coool}`
 
 There are two functions in the php code, which are `register` and `module`.
