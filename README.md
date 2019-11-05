@@ -288,6 +288,7 @@ If we upload `file.php.jpg`,
     the web server will treat this file as php file and execute it 
     because `apache` server will keep finding the file extension from the back
     until it find a valid one.
+After upload the file, access the uploaded file with `https://edu-ctf.csie.org:10156/upload/<filename>`
 
 
 ## [Lab 0x04] EzLFI
