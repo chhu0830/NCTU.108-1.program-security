@@ -1,6 +1,7 @@
 # NCTU.108-1.program-security
 
 ## Lab 0x01
+
 ### What The Hell
 `rev` `50 pts` `FLAG{BABY_REVERSE_123}`
 
@@ -20,6 +21,7 @@
 
 
 ## 0x01
+
 ### Back to the Future
 `rev` `50 pts` `FLAG{PE_!S_EASY}`
 
@@ -37,6 +39,7 @@
 
 
 ## 0x02
+
 ### IDAmudamudamuda
 `rev` `100 pts` `FLAG{y3s!!y3s!!y3s!!0h_my_g0d!!}`
 
@@ -144,6 +147,7 @@ We know `unk_5D4018`, and we can just reverse the calculation and get the flag.
 
 
 ## Lab 0x03
+
 ### sushi
 `web` `50 pts` `FLAG{HaoChihDeSuSiZaiJhengSian}`
 
@@ -222,6 +226,7 @@ Both username and password input `a" or "a"="a`.
 
 
 ## 0x03
+
 ### Unexploitable
 `web` `100 pts` `FLAG{baby_recon_dont_forget_to_look_github_page}`
 
@@ -277,6 +282,7 @@ $ ./race.py | $ ./race.py '<?php system("cat /flag_is_here")'
 
 
 ## Lab 0x04
+
 ### sh3ll\_upload3r
 `web` `50 pts` `FLAG{simple_upload_practice_lol}`
 
@@ -353,6 +359,7 @@ https://edu-ctf.csie.org:10158/news.php?id=-1%20union%20select%201,2,THIS_IS_FLA
 ```
 
 ## 0x04
+
 ### Cathub v2
 `web` `150` `FLAG{hey___or@cle_d4tab4s3__inj3cti0n_i5____to0OoO0ooO0OO_e4sy!!!!!??}`
 
@@ -375,7 +382,8 @@ https://edu-ctf.csie.org:10159/video.php?vid=1/**/order/**/by/**/3
 
 We try to use `union select 1,2,3` and get an error.
 The database may not MySQL.
-Then we try `union select NULL,NULL,NULL from dual` and succeed.
+Then we try `union select NULL,NULL,NULL from dual` and succeed,
+    which indicate that the database is `oracle`.
 
 ```
 https://edu-ctf.csie.org:10159/video.php?vid=1/**/union/**/select/**/NULL,NULL,NULL/**/from/**/dual
@@ -436,3 +444,90 @@ The flag is render by CSS, the true flag is
 ```
 FLAG{hey___or@cle_d4tab4s3__inj3cti0n_i5____to0OoO0ooO0OO_e4sy!!!!!??}
 ```
+
+
+## Lab 0x05
+
+### bof
+`pwn` `50` `FLAG{Pwned_7he_f1rs7_b1n4ry}`
+
+> Buffer Overflow.
+> 
+> [bof](https://edu-ctf.csie.org/files/bof-da5035445d5981d61fe775c3894f06ff)
+> [bof.c](https://edu-ctf.csie.org/files/bof-3d66d34d0cbc6992db1c3d1e2f29937b.c)
+> 
+> `nc edu-ctf.csie.org 10170`
+
+There is a function `try_to_call_me()` which will call `system("sh")`.
+Use `checksec` to ensure that there is no `PIE` and `canary`.
+
+There is a small problem that after the bof success,
+    the `system("sh")` does not work.
+The reason is that
+    there is assembly code checking the address to align to `16byte`.
+For more details, check [here](https://www.xmcve.com/2019/05/%E5%9C%A8%E4%B8%80%E4%BA%9B64%E4%BD%8D%E7%9A%84glibc%E7%9A%84payload%E8%B0%83%E7%94%A8system%E5%87%BD%E6%95%B0%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/?fbclid=IwAR1xhi2C03wd47lKdlMntlUgQNwrOwdfmrcZxpdVxxuOxq0RUcQJ9uRjlPM).
+
+### how2orw
+`pwn` `50` `FLAG{H0w_2_she1lc0d1ng}`
+
+> Shellcoding is fun :D
+> 
+> [orw](https://edu-ctf.csie.org/files/orw-dd08e5c4f8fcd27ad3468b8243c4585e)
+> 
+> `nc edu-ctf.csie.org 10171`
+> 
+> Flag is at `/home/orw/flag`
+
+The program can only execute `open()`, `read()`, and `write()`.
+> I haven't find how yet.
+
+Just use `shellcraft` in `pwntools` to generate the shell code.
+
+
+## 0x05
+
+### Casino
+`pwn` `100` `FLAG{0verf1ow_1n_ev3rywhere!}`
+
+> Welcome to edu casino.
+> Hacker don't need luck :P
+> 
+> [casino](https://edu-ctf.csie.org/files/casino-d5f55f428320c13ce558a57258cfe4c2)
+> [casino.c](https://edu-ctf.csie.org/files/casino-ce7cb40c0cbf91aaa4df8253fc080e62.c)
+> Ps. The flag is on the server, you need to get shell.
+> 
+> `nc edu-ctf.csie.org 10172`
+
+We need to find the injection point first.
+`read_int()` use `__read_chk`, which is not likely to cause `bof`.
+Finally, we found that there is a injection point.
+The code does not check the range of the `idx`,
+    which cause an arbitrary write vulnerability.
+
+```c
+printf( "Change the number? [1:yes 0:no]: " );
+if( read_int() == 1 ){
+  printf( "Which number [1 ~ 6]: " );
+  idx = read_int() - 1;
+  printf( "Chose the number %d: " , idx );
+  guess[idx] = read_int();
+}
+```
+
+With the injection point, we can do `got hijacking`.
+We can not choose `printf` because the function will be used at the second `trial`.
+We can only choose `puts` as our target.
+
+Because we can not leak `libc` address,
+    we can only use `puts` to jump to a buffer,
+    which we can control the contents.
+The `name` is a pretty good choice because of the large space.
+
+After we write the `shell code` at the `name`,
+    we also overwrote the `seed` for random function,
+    which let the `seed` be controlled.
+
+We can guess the numbers twice.
+In the first trial, modify the lower 4 bytes of the `puts got` to `name`.
+In the second trial, modify the higher 4 bytes of the `puts got` to `name`,
+   which is `0`, and guess the numbers right with the control of the `seed`.
